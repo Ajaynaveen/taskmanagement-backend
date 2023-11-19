@@ -95,6 +95,32 @@ const taskController = {
         }
     },
 
+
+    searchTasks: async (req, res) => {
+        try {
+            const userId = req.userId;
+            const searchQuery = req.query.search;
+
+            if (!searchQuery) {
+                return res.status(400).json({ message: 'Search query is required' });
+            }
+
+            const tasks = await Task.find({
+                assignedTo: userId,
+                $or: [
+                    { title: { $regex: new RegExp(searchQuery, 'i') } },
+                    { description: { $regex: new RegExp(searchQuery, 'i') } },
+                ],
+            });
+
+            res.json(tasks);
+        } catch (error) {
+            console.error('Error searching tasks', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
 };
+
+
 
 module.exports = taskController;

@@ -11,6 +11,8 @@ router.post('/', authmiddleware.verifytoken, taskController.createTask);
 // Get all tasks for the authenticated user
 router.get('/', authmiddleware.verifytoken, taskController.getTasks);
 
+router.get('/search', authmiddleware.verifytoken, taskController.searchTasks);
+
 // // Get a specific task by ID
 router.get('/:taskId', authmiddleware.verifytoken, taskController.getTaskById);
 
@@ -19,5 +21,6 @@ router.put('/:taskId', authmiddleware.verifytoken, taskController.updateTask);
 
 // // Delete a task by ID
 router.delete('/:taskId', authmiddleware.verifytoken, taskController.deleteTask);
+
 
 module.exports = router;
