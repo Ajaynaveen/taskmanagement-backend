@@ -1,6 +1,7 @@
 const User=require('../models/user')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
+const sendPasswordResetEmail = require('../sendPasswordResetEmail');
 
 
 
@@ -111,8 +112,63 @@ const userController={
             res.status(500).json({message:"internal server error"})
 
         }
+    },
+    forgetpassword: async (req, res) => {
+        const { email } = req.body;
+    
+        try {
+            const user = await User.findOne({ email });
+    
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            const resetToken = jwt.sign({ email }, config.SECRET_KEY, { expiresIn: '1h' });
+    
+            user.resetPasswordToken = resetToken;
+            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    
+            await user.save();
+    
+            sendPasswordResetEmail(email, resetToken);
+    
+            res.json(resetToken );
+        } catch (error) {
+            console.error('Error sending password reset email:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
+
+
+    resetpassword: async (req, res) => {
+       const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
     }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
 
+    await user.save();
 
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
+}
+    
+    
+
 module.exports=userController;

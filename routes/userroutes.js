@@ -3,6 +3,8 @@ const router=express.Router();
 const userController = require('../controllers/userController')
 const authmiddleware=require('../middleware/authmidleware')
 router.post('/signup',userController.signup)
+router.post('/forgetpassword',userController.forgetpassword)
+router.post('/reset-password/:token',userController.resetpassword)
 router.get('/list',userController.getUserList)
 
 router.post('/signin',userController.signin)
