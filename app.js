@@ -8,11 +8,8 @@ const Taskroutes = require('./routes/taskroutes');
 const middlewares=require('./utils/middleware')
 
 
-const corsOptions = {
-  origin: 'https://bright-crumble-cd5c4c.netlify.app',
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+
+app.use(cors());
 
 app.use(bodyparser.json())
 app.use(middlewares.requestlogger)
