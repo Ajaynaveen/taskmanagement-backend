@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 // Function to send a password reset email
 const sendPasswordResetEmail = (toEmail, resetToken) => {
-  const resetLink = `https://bright-crumble-cd5c4c.netlify.app/reset-password/?token=${resetToken}`;
+  const resetLink = `http://localhost:5173/reset-password/?token=${resetToken}`;
   const mailOptions = {
     from: 'ajay.s.naviee@gmail.com', // Your Gmail email address
     to: toEmail, // Recipient's email address
